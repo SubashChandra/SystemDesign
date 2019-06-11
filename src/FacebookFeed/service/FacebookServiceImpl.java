@@ -1,9 +1,11 @@
 package FacebookFeed.service;
 
-import FacebookFeed.models.User;
+import FacebookFeed.models.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.PriorityQueue;
 
 public class FacebookServiceImpl implements FacebookService {
 
@@ -78,22 +80,104 @@ public class FacebookServiceImpl implements FacebookService {
 
     @Override
     public boolean addPost(Integer userId, String postType, String content) {
-        return false;
+        if(!userMap.containsKey(userId)){
+            System.out.println("User doesn't exist");
+            return false;
+        }
+        Post newPost = null;
+        if(postType.equalsIgnoreCase(PostType.TEXTPOST.toString())){
+            newPost = new TextPost(userId, content);
+
+        }
+        else if(postType.equalsIgnoreCase(PostType.IMAGE.toString())){
+            newPost = new ImagePost(userId, content);
+        }
+        else if(postType.equalsIgnoreCase(PostType.VIDEO.toString())){
+            newPost = new VideoPost(userId, content);
+        }
+        if(newPost==null){
+            System.out.println("Invalid Input");
+            return false;
+        }
+
+
+        User curUser = userMap.get(userId);
+        curUser.getPostsMap().put(newPost.getPostId(), newPost);
+        return true;
     }
 
     @Override
-    public boolean addLike(Integer postId) {
-        return false;
+    public boolean addLike(Integer postOwnerId, Integer postId) {
+        if(!userMap.containsKey(postOwnerId) || !userMap.get(postOwnerId).getPostsMap().containsKey(postId)){
+            System.out.println("Invalid Input");
+        }
+
+        User user = userMap.get(postOwnerId);
+        user.getPostsMap().get(postId).addLike();
+        return true;
     }
 
     @Override
-    public boolean addComment(Integer postId, Integer userId, String comment) {
-        return false;
+    public boolean addComment(Integer postOwnerId, Integer postId, Integer userId, String comment) {
+        if(!userMap.containsKey(postOwnerId) || !userMap.get(postOwnerId).getPostsMap().containsKey(postId) || !userMap.containsKey(userId)){
+            System.out.println("Invalid Input");
+        }
+
+        User postOwner = userMap.get(postOwnerId);
+        User commenter = userMap.get(userId);
+        postOwner.getPostsMap().get(postId).addComment(userId, commenter.getName(), comment);
+        return true;
+
     }
 
     @Override
     public void printFeedDefault() {
+        if(activeUser == null){
+            System.out.println("No active user currently");
+            return;
+        }
 
+        Comparator<Post> defaultComparator = new Comparator<Post>() {
+            @Override
+            public int compare(Post p1, Post p2) {
+                if(p1.getCreatedDate().before(p2.getCreatedDate()))
+                    return 1;
+                return 0;
+            }
+        };
+
+        PriorityQueue posts = new PriorityQueue<Post>(defaultComparator);
+        User curUser = userMap.get(activeUser);
+        ArrayList<Integer> friendList = curUser.getFriendList();
+
+        for(Integer friendId : friendList){
+            HashMap<Integer, Post> friendsPosts = userMap.get(friendId).getPostsMap();
+            posts.addAll(friendsPosts.values());
+        }
+        posts.addAll(curUser.getPostsMap().values());
+
+        printFeed(posts);
+    }
+
+    private void printFeed(PriorityQueue<Post> posts) {
+        while(!posts.isEmpty()){
+            Post post = posts.poll();
+            if(post.getPostType().equals(PostType.TEXTPOST)){
+                System.out.println("~~~~~~~~~~~~~~~~~~~~~");
+                System.out.println(userMap.get(post.getUserId()).getName());
+                System.out.println("Text Post");
+                System.out.println(((TextPost)post).getContent());
+                System.out.println("Likes: " + post.getLikes());
+                System.out.println("Comments:");
+
+                for(Comment comment : post.getComments()){
+                    System.out.println(comment.getUserName() + " -> "+ comment.getContent());
+                    System.out.println("---");
+                }
+                System.out.println("---------------------");
+            }
+        }
+        System.out.println("end of feed");
     }
 
     @Override

@@ -3,7 +3,7 @@ package FacebookFeed.models;
 import java.util.ArrayList;
 import java.util.Date;
 
-abstract class Post {
+public abstract class Post {
     private static int counter =1;
 
     public Integer getPostId() {
@@ -17,15 +17,17 @@ abstract class Post {
     private Integer postId;
     private PostType postType;
     private Integer likes;
-    private ArrayList<String> comments;
+    private ArrayList<Comment> comments;
     private Date createdDate;
+    private Integer userId;
 
-    public Post(PostType postType) {
+    public Post(Integer userId, PostType postType) {
         this.postId = counter++;
         this.postType = postType;
         this.likes = 0;
         this.comments = new ArrayList<>();
         this.createdDate = new Date();
+        this.userId = userId;
     }
 
     public PostType getPostType() {
@@ -36,6 +38,14 @@ abstract class Post {
         this.postType = postType;
     }
 
+    public void addLike(){
+        this.likes++;
+    }
+
+    public void addComment(Integer userId, String userName, String content){
+        Comment comment = new Comment(userId, userName, content);
+    }
+
     public Integer getLikes() {
         return likes;
     }
@@ -44,11 +54,11 @@ abstract class Post {
         this.likes = likes;
     }
 
-    public ArrayList<String> getComments() {
+    public ArrayList<Comment> getComments() {
         return comments;
     }
 
-    public void setComments(ArrayList<String> comments) {
+    public void setComments(ArrayList<Comment> comments) {
         this.comments = comments;
     }
 
@@ -58,5 +68,13 @@ abstract class Post {
 
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 }

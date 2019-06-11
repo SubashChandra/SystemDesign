@@ -11,8 +11,8 @@ public interface FacebookService {
     public boolean activateUser(String id);
     public boolean addFriend(Integer userId);
     public boolean addPost(Integer userId, String postType, String content);
-    public boolean addLike(Integer postId);
-    public boolean addComment(Integer postId, Integer userId, String comment);
+    public boolean addLike(Integer postOwnerId, Integer postId);
+    public boolean addComment(Integer postOwnerId, Integer postId, Integer userId, String comment);
 
     //get
     public void printFeedDefault();

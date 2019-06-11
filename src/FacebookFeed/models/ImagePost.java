@@ -1,9 +1,9 @@
 package FacebookFeed.models;
 
-public class TextPost extends Post {
+public class ImagePost extends Post {
     private String content;
-    public TextPost(Integer userId, String content) {
-        super(userId, PostType.TEXTPOST);
+    public ImagePost(Integer userId, String content){
+        super(userId, PostType.IMAGE);
         this.content = content;
     }
 
@@ -15,3 +15,4 @@ public class TextPost extends Post {
         this.content = content;
     }
 }
+

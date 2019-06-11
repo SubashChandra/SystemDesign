@@ -1,6 +1,7 @@
 package FacebookFeed.models;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class User {
 
@@ -9,7 +10,7 @@ public class User {
     private String name;
     private String sex;
     private ArrayList<Integer> friendList;
-    private ArrayList<Post> posts;
+    private HashMap<Integer, Post> postsMap;
 
     public User(String name, String sex) {
         this.usedId = counter++;
@@ -49,11 +50,11 @@ public class User {
         this.friendList = friendList;
     }
 
-    public ArrayList<Post> getPosts() {
-        return posts;
+    public HashMap<Integer, Post> getPostsMap() {
+        return postsMap;
     }
 
-    public void setPosts(ArrayList<Post> posts) {
-        this.posts = posts;
+    public void setPosts(HashMap<Integer, Post> postsMap) {
+        this.postsMap = postsMap;
     }
 }

@@ -1,9 +1,10 @@
 package FacebookFeed.models;
 
-public class TextPost extends Post {
-    private String content;
-    public TextPost(Integer userId, String content) {
-        super(userId, PostType.TEXTPOST);
+public class VideoPost extends Post{
+    String content;
+
+    public VideoPost(Integer userId, String content) {
+        super(userId, PostType.VIDEO);
         this.content = content;
     }
 
