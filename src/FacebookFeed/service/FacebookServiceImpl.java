@@ -9,7 +9,7 @@ import java.util.PriorityQueue;
 
 public class FacebookServiceImpl implements FacebookService {
 
-    private String activeUser = null;
+    private Integer activeUser = null;
     private HashMap<Integer, User> userMap;
 
     @Override
@@ -53,11 +53,12 @@ public class FacebookServiceImpl implements FacebookService {
     }
 
     @Override
-    public boolean activateUser(String id) {
+    public boolean activateUser(Integer id) {
         if(userMap.containsKey(id)){
             activeUser = id;
             return true;
         }
+        System.out.println("User Id is not valid");
         return false;
     }
 
@@ -140,7 +141,7 @@ public class FacebookServiceImpl implements FacebookService {
         Comparator<Post> defaultComparator = new Comparator<Post>() {
             @Override
             public int compare(Post p1, Post p2) {
-                if(p1.getCreatedDate().before(p2.getCreatedDate()))
+                if(p1.getCreatedDate().after(p2.getCreatedDate()))
                     return 1;
                 return 0;
             }
@@ -148,6 +149,8 @@ public class FacebookServiceImpl implements FacebookService {
 
         PriorityQueue posts = new PriorityQueue<Post>(defaultComparator);
         User curUser = userMap.get(activeUser);
+        System.out.println("Default Feed for User: "+ curUser.getName());
+        System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
         ArrayList<Integer> friendList = curUser.getFriendList();
 
         for(Integer friendId : friendList){
@@ -157,16 +160,55 @@ public class FacebookServiceImpl implements FacebookService {
         posts.addAll(curUser.getPostsMap().values());
 
         printFeed(posts);
+        System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
     }
 
     private void printFeed(PriorityQueue<Post> posts) {
+
         while(!posts.isEmpty()){
             Post post = posts.poll();
             if(post.getPostType().equals(PostType.TEXTPOST)){
                 System.out.println("~~~~~~~~~~~~~~~~~~~~~");
-                System.out.println(userMap.get(post.getUserId()).getName());
+                System.out.println("Post by: " + userMap.get(post.getUserId()).getUsedId() + " : " + userMap.get(post.getUserId()).getName());
+                System.out.println("---");
                 System.out.println("Text Post");
+                System.out.println("Post Id: " + post.getPostId());
+                System.out.println("---");
                 System.out.println(((TextPost)post).getContent());
+                System.out.println("Likes: " + post.getLikes());
+                System.out.println("Comments:");
+
+                for(Comment comment : post.getComments()){
+                    System.out.println(comment.getUserName() + " -> "+ comment.getContent());
+                    System.out.println("---");
+                }
+                System.out.println("---------------------");
+            }
+            else if(post.getPostType().equals(PostType.IMAGE)){
+                System.out.println("~~~~~~~~~~~~~~~~~~~~~");
+                System.out.println("Post by: " + userMap.get(post.getUserId()).getName());
+                System.out.println("---");
+                System.out.println("Image Post");
+                System.out.println("Post Id: " + post.getPostId());
+                System.out.println("---");
+                System.out.println(((ImagePost)post).getContent());
+                System.out.println("Likes: " + post.getLikes());
+                System.out.println("Comments:");
+
+                for(Comment comment : post.getComments()){
+                    System.out.println(comment.getUserName() + " -> "+ comment.getContent());
+                    System.out.println("---");
+                }
+                System.out.println("---------------------");
+            }
+            else if(post.getPostType().equals(PostType.VIDEO)){
+                System.out.println("~~~~~~~~~~~~~~~~~~~~~");
+                System.out.println("Post by: " + userMap.get(post.getUserId()).getName());
+                System.out.println("---");
+                System.out.println("Video Post");
+                System.out.println("Post Id: " + post.getPostId());
+                System.out.println("---");
+                System.out.println(((VideoPost)post).getContent());
                 System.out.println("Likes: " + post.getLikes());
                 System.out.println("Comments:");
 

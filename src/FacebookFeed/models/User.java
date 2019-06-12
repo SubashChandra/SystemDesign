@@ -16,6 +16,8 @@ public class User {
         this.usedId = counter++;
         this.name = name;
         this.sex = sex;
+        this.friendList = new ArrayList<>();
+        this.postsMap = new HashMap<>();
     }
 
     public Integer getUsedId() {

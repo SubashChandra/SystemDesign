@@ -44,6 +44,7 @@ public abstract class Post {
 
     public void addComment(Integer userId, String userName, String content){
         Comment comment = new Comment(userId, userName, content);
+        this.comments.add(comment);
     }
 
     public Integer getLikes() {

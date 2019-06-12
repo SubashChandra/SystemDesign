@@ -8,7 +8,7 @@ public interface FacebookService {
 
     //updates
     public boolean createUser(String name, String sex);
-    public boolean activateUser(String id);
+    public boolean activateUser(Integer id);
     public boolean addFriend(Integer userId);
     public boolean addPost(Integer userId, String postType, String content);
     public boolean addLike(Integer postOwnerId, Integer postId);
